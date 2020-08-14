@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$USER_HOME$/Documents/private/projects/azgardian-control-lib/azgardian-control-lib.iml" filepath="$USER_HOME$/Documents/private/projects/azgardian-control-lib/azgardian-control-lib.iml" />
+      <module fileurl="file://$USER_HOME$/Documents/private/projects/core-lib/core-lib.iml" filepath="$USER_HOME$/Documents/private/projects/core-lib/core-lib.iml" />
+      <module fileurl="file://$USER_HOME$/Documents/private/projects/jpa-helper/jpa-helper.iml" filepath="$USER_HOME$/Documents/private/projects/jpa-helper/jpa-helper.iml" />
+      <module fileurl="file://$USER_HOME$/NetBeansProjects/LandRegistry/land-registry-service.iml" filepath="$USER_HOME$/NetBeansProjects/LandRegistry/land-registry-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/masters-project.iml" filepath="$PROJECT_DIR$/masters-project.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../quiz-manager/quiz-manager.iml" filepath="$PROJECT_DIR$/../quiz-manager/quiz-manager.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../quiz-manager/quiz-manager-lib/quiz-manager-lib.iml" filepath="$PROJECT_DIR$/../quiz-manager/quiz-manager-lib/quiz-manager-lib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../quiz-manager/quiz-manager-service/quiz-manager-service.iml" filepath="$PROJECT_DIR$/../quiz-manager/quiz-manager-service/quiz-manager-service.iml" />
+    </modules>
+  </component>
+</project>

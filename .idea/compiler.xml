@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="azgardian-control-lib" />
+        <module name="core-lib" />
+        <module name="jpa-helper" />
+        <module name="land-registry-service" />
+        <module name="masters-project" />
+        <module name="quiz-manager-lib" />
+        <module name="quiz-manager-service" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="azgardian-control-lib" target="1.8" />
+      <module name="core-lib" target="1.8" />
+      <module name="jpa-helper" target="1.8" />
+      <module name="land-registry-service" target="1.8" />
+      <module name="masters-project" target="1.8" />
+      <module name="quiz-manager" target="1.8" />
+      <module name="quiz-manager-lib" target="1.8" />
+      <module name="quiz-manager-service" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
