@@ -99,4 +99,15 @@ public class AppController {
         }
     }
 
+    @RequestMapping(value = "/block-chain", method = RequestMethod.GET)
+    @ResponseBody
+    public List<String> getBlockChain()throws RestControllerException{
+        try{
+            return documentManagerService.getBlockChain();
+        }
+        catch (RestServiceException e){
+            throw new RestControllerException(e);
+        }
+    }
+
 }

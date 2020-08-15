@@ -26,8 +26,6 @@ import java.util.Optional;
  */
 @Service
 public class UserService extends AsgardianUserValidationService<User>{
-    @Autowired
-    UserRepository userRepository;
 
     @Autowired
     AuthorityRepository authorityRepository;

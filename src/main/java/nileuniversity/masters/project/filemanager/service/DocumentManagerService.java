@@ -65,4 +65,8 @@ public class DocumentManagerService {
             throw new RestServiceException("Unable to read document");
         }
     }
+
+    public List<String> getBlockChain()throws RestServiceException{
+        return documentInfoRepository.getAllHashesOrdered();
+    }
 }
