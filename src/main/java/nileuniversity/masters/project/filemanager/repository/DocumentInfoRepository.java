@@ -22,4 +22,7 @@ public interface DocumentInfoRepository extends JpaRepository<DocumentInfo,Long>
     Optional<DocumentInfo> findByDocumentHash(String documentHash);
 
     List<DocumentInfo> findAllByUploadedBy(User user);
+
+    @Query("SELECT d FROM DocumentInfo d ORDER BY d.id ASC")
+    List<DocumentInfo> getAllDocumentInfo();
 }

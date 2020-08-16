@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class FileBlockStorageService {
@@ -54,12 +54,41 @@ public class FileBlockStorageService {
     }
 
     public DocumentInfo generateDocumentHash(DocumentInfo documentInfo)throws RestServiceException{
-        Gson gson = new Gson();
         Optional<DocumentInfo> lastDocument = documentInfoRepository.findFirstByOrderByIdDesc();
         documentInfo.setPrevioushash(lastDocument.isPresent() ? lastDocument.get().getDocumentHash() : null);
-        String stringifiedJson = gson.toJson(documentInfo);
-        documentInfo.setDocumentHash(HashingUtil.applySHA512(stringifiedJson));
+        documentInfo.setDocumentHash(calculateHash(documentInfo));
         return documentInfo;
+    }
+
+    private String calculateHash(DocumentInfo documentInfo)throws RestServiceException{
+        documentInfo.setDocumentHash(null);
+        String stringifiedJson = new Gson().toJson(documentInfo);
+        return HashingUtil.applySHA256(stringifiedJson);
+    }
+
+    /**
+     * Chain validation
+     * calculates hash of the each document and compares with its stored hash, must be equal
+     * calculates hash of previous documents for every doc and compare with the previous stored for the doc
+     * @return
+     * @throws RestServiceException
+     */
+    public Boolean validateChain()throws RestServiceException{
+        DocumentInfo previous;
+        DocumentInfo current;
+        List<DocumentInfo> blockChain = documentInfoRepository.getAllDocumentInfo();
+        for(int i =1; i<blockChain.size();i++){
+            current = blockChain.get(i);
+            previous = blockChain.get(i-1);
+            String currentHash = current.getDocumentHash();
+            if(!currentHash.equals(calculateHash(current))){
+                throw new RestServiceException("Hash does not match for document!");
+            }
+            if(!current.getPrevioushash().equals(calculateHash(previous))){
+                throw new RestServiceException("Hash does not match for previous document");
+            }
+        }
+        return true;
     }
 
 

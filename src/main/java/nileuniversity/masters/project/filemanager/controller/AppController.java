@@ -10,6 +10,7 @@ import nileuniversity.masters.project.filemanager.apimodels.RegistrationRequest;
 import nileuniversity.masters.project.filemanager.models.DocumentInfo;
 import nileuniversity.masters.project.filemanager.models.User;
 import nileuniversity.masters.project.filemanager.service.DocumentManagerService;
+import nileuniversity.masters.project.filemanager.service.FileBlockStorageService;
 import nileuniversity.masters.project.filemanager.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -28,6 +29,9 @@ public class AppController {
 
     @Autowired
     private DocumentManagerService documentManagerService;
+
+    @Autowired
+    private FileBlockStorageService blockStorageService;
 
     @RequestMapping(value = "/login",method = RequestMethod.POST)
     @ResponseBody
@@ -65,9 +69,9 @@ public class AppController {
     @RequestMapping(value = "/save-document", method = RequestMethod.POST)
     @ResponseBody
     public DocumentInfo saveDocument(
-            @RequestParam("file") MultipartFile file,
             @RequestParam("docname") String name,
             @RequestParam("docdesc")String docDesc,
+            @RequestParam("file") MultipartFile file,
             @RequestAttribute(JWTokenUtil.USER_ATTRIBUTE_KEY)LoggedInUser loggedInUser)throws RestControllerException{
         try{
             DocumentInfo documentInfo = new DocumentInfo();
@@ -103,11 +107,22 @@ public class AppController {
         }
     }
 
-    @RequestMapping(value = "/block-chain", method = RequestMethod.GET)
+    @RequestMapping(value = "/get-chain", method = RequestMethod.GET)
     @ResponseBody
     public List<String> getBlockChain()throws RestControllerException{
         try{
             return documentManagerService.getBlockChain();
+        }
+        catch (RestServiceException e){
+            throw new RestControllerException(e);
+        }
+    }
+
+    @RequestMapping(value = "/validate-chain", method = RequestMethod.GET)
+    @ResponseBody
+    public Boolean validateBlockChain()throws RestControllerException{
+        try{
+            return blockStorageService.validateChain();
         }
         catch (RestServiceException e){
             throw new RestControllerException(e);
