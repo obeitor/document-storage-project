@@ -67,7 +67,7 @@ public class AppController {
     public DocumentInfo saveDocument(
             @RequestParam("file") MultipartFile file,
             @RequestParam("docname") String name,
-            @RequestParam(value = "docdesc",required = false)String docDesc,
+            @RequestParam("docdesc")String docDesc,
             @RequestAttribute(JWTokenUtil.USER_ATTRIBUTE_KEY)LoggedInUser loggedInUser)throws RestControllerException{
         try{
             DocumentInfo documentInfo = new DocumentInfo();
