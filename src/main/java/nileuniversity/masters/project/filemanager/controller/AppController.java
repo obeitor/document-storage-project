@@ -5,6 +5,7 @@ import com.softobt.asgardian.control.config.JWTokenUtil;
 import com.softobt.core.api.TokenDetail;
 import com.softobt.core.exceptions.models.RestControllerException;
 import com.softobt.core.exceptions.models.RestServiceException;
+import com.softobt.core.logger.services.LoggerService;
 import nileuniversity.masters.project.filemanager.apimodels.LoginRequest;
 import nileuniversity.masters.project.filemanager.apimodels.RegistrationRequest;
 import nileuniversity.masters.project.filemanager.models.DocumentInfo;
@@ -107,6 +108,18 @@ public class AppController {
         }
     }
 
+    @RequestMapping(value = "/ipfs/download/{hash}", method = RequestMethod.GET)
+    @ResponseBody
+    public String downloadDocument(@PathVariable(value = "hash")String hash)throws RestControllerException{
+        try{
+            LoggerService.info(AppController.class,hash);
+            return documentManagerService.getFileIpfsLocation(hash);
+        }
+        catch (RestServiceException e){
+            throw new RestControllerException(e);
+        }
+    }
+
     @RequestMapping(value = "/get-chain", method = RequestMethod.GET)
     @ResponseBody
     public List<String> getBlockChain()throws RestControllerException{
@@ -120,7 +133,7 @@ public class AppController {
 
     @RequestMapping(value = "/validate-chain", method = RequestMethod.GET)
     @ResponseBody
-    public Boolean validateBlockChain()throws RestControllerException{
+    public String[] validateBlockChain()throws RestControllerException{
         try{
             return blockStorageService.validateChain();
         }

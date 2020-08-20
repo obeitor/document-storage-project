@@ -7,6 +7,7 @@ import io.ipfs.api.IPFS;
 import io.ipfs.api.MerkleNode;
 import io.ipfs.api.NamedStreamable;
 import io.ipfs.multihash.Multihash;
+import nileuniversity.masters.project.filemanager.apimodels.DocumentHashingData;
 import nileuniversity.masters.project.filemanager.models.DocumentInfo;
 import nileuniversity.masters.project.filemanager.repository.DocumentInfoRepository;
 import nileuniversity.masters.project.filemanager.utils.HashingUtil;
@@ -20,6 +21,8 @@ import java.util.*;
 
 @Service
 public class FileBlockStorageService {
+
+
 
     @Autowired
     IPFS ipfsStorage;
@@ -42,6 +45,7 @@ public class FileBlockStorageService {
     }
 
     public void fetchFromIpfs(String ipfsHash, OutputStream outputStream)throws RestServiceException{
+        if(ipfsStorage==null)throw new RestServiceException("IPFS was not enabled, no datastore to retrieve from!");
         try{
             Multihash multihash = Multihash.fromBase58(ipfsHash);
             byte[] fileContent = ipfsStorage.cat(multihash);
@@ -56,13 +60,13 @@ public class FileBlockStorageService {
     public DocumentInfo generateDocumentHash(DocumentInfo documentInfo)throws RestServiceException{
         Optional<DocumentInfo> lastDocument = documentInfoRepository.findFirstByOrderByIdDesc();
         documentInfo.setPrevioushash(lastDocument.isPresent() ? lastDocument.get().getDocumentHash() : null);
+        documentInfo = documentInfoRepository.save(documentInfo);
         documentInfo.setDocumentHash(calculateHash(documentInfo));
         return documentInfo;
     }
 
     private String calculateHash(DocumentInfo documentInfo)throws RestServiceException{
-        documentInfo.setDocumentHash(null);
-        String stringifiedJson = new Gson().toJson(documentInfo);
+        String stringifiedJson = new Gson().toJson(new DocumentHashingData(documentInfo));
         return HashingUtil.applySHA256(stringifiedJson);
     }
 
@@ -73,7 +77,31 @@ public class FileBlockStorageService {
      * @return
      * @throws RestServiceException
      */
-    public Boolean validateChain()throws RestServiceException{
+    public String[] validateChain()throws RestServiceException{
+        DocumentInfo previous;
+        DocumentInfo current;
+        List<DocumentInfo> blockChain = documentInfoRepository.getAllDocumentInfo();
+        String[] rsp = new String[blockChain.size()];
+        Arrays.setAll(rsp,i->blockChain.get(i).getDocumentHash()+" -> IS "+(i==0?"":"NOT")+" VALID");
+        for(int i =1; i<blockChain.size();i++){
+            current = blockChain.get(i);
+            previous = blockChain.get(i-1);
+            String currentHash = current.getDocumentHash();
+            if(!currentHash.equals(calculateHash(current))){
+                return rsp;
+                //throw new RestServiceException("Hash does not match for document - "+current.getDocumentName());
+            }
+            if(!current.getPrevioushash().equals(calculateHash(previous))){
+                rsp[i-1] = previous.getDocumentHash()+" -> IS NOT VALID";
+                return rsp;
+                //throw new RestServiceException("Hash does not match for previous document");
+            }
+            rsp[i] = currentHash+" -> IS VALID";
+        }
+        return rsp;
+    }
+
+    public boolean validateChain(String documentHash)throws RestServiceException{
         DocumentInfo previous;
         DocumentInfo current;
         List<DocumentInfo> blockChain = documentInfoRepository.getAllDocumentInfo();
@@ -82,13 +110,14 @@ public class FileBlockStorageService {
             previous = blockChain.get(i-1);
             String currentHash = current.getDocumentHash();
             if(!currentHash.equals(calculateHash(current))){
-                throw new RestServiceException("Hash does not match for document!");
+                throw new RestServiceException("Chain is not valid up to document requested");
             }
             if(!current.getPrevioushash().equals(calculateHash(previous))){
-                throw new RestServiceException("Hash does not match for previous document");
+                throw new RestServiceException("Chain is not valid up to document requested");
             }
+            if(currentHash.equals(documentHash))return true;
         }
-        return true;
+        throw new RestServiceException("Hash was not found on the chain");
     }
 
 

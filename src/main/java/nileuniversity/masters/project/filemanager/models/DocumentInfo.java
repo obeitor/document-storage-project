@@ -1,6 +1,7 @@
 package nileuniversity.masters.project.filemanager.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.softobt.jpa.helpers.converters.DateTimeConverter;
 
 import javax.persistence.*;
@@ -28,6 +29,7 @@ public class DocumentInfo {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "uploaded_by",referencedColumnName = "id", nullable = false)
+    @JsonIgnore
     private User uploadedBy;
 
     @Convert(converter = DateTimeConverter.class)
@@ -103,5 +105,10 @@ public class DocumentInfo {
 
     public void setDocumentExt(String documentExt) {
         this.documentExt = documentExt;
+    }
+
+    @JsonProperty("uploadedBy")
+    public String getOwner(){
+        return uploadedBy.getFirstname()+" "+uploadedBy.getLastname();
     }
 }

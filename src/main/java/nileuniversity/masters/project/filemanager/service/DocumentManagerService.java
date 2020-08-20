@@ -2,16 +2,19 @@ package nileuniversity.masters.project.filemanager.service;
 
 import com.softobt.asgardian.control.apimodels.LoggedInUser;
 import com.softobt.core.exceptions.models.RestServiceException;
+import com.softobt.core.logger.services.LoggerService;
 import nileuniversity.masters.project.filemanager.models.DocumentInfo;
 import nileuniversity.masters.project.filemanager.models.User;
 import nileuniversity.masters.project.filemanager.repository.DocumentInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -25,6 +28,9 @@ public class DocumentManagerService {
     @Autowired
     AuthService authService;
 
+    @Value("${ipfs.config.file-path:http://localhost:8080/ipfs/}")
+    private String ipfsPath;
+
     public List<DocumentInfo> getAllDocumentForUser(LoggedInUser loggedInUser)throws RestServiceException{
         User user = authService.getUser(loggedInUser);
         return documentInfoRepository.findAllByUploadedBy(user);
@@ -33,6 +39,7 @@ public class DocumentManagerService {
     public DocumentInfo saveNewDocument(LoggedInUser loggedInUser,DocumentInfo documentInfo, MultipartFile file)throws RestServiceException{
         User user = authService.getUser(loggedInUser);
         documentInfo.setUploadedBy(user);
+        documentInfo.setUploadedDate(LocalDateTime.now());
         String filename = file.getOriginalFilename();
         int dot = filename.lastIndexOf(".")+1;
         documentInfo.setDocumentExt(filename.substring(dot));
@@ -46,6 +53,13 @@ public class DocumentManagerService {
         if(optional.isPresent())
             return optional.get();
         throw new RestServiceException("Sorry Document was not found");
+    }
+
+    public String getFileIpfsLocation(String documentHash)throws RestServiceException{
+
+        DocumentInfo info = getInfoForDocument(documentHash);
+        storageService.validateChain(documentHash);
+        return ipfsPath+info.getIpfsHash();
     }
 
     public void downloadDocument(String documentHash, HttpServletResponse response)throws RestServiceException{

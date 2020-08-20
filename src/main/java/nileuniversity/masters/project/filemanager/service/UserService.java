@@ -8,6 +8,7 @@ import com.softobt.asgardian.control.service.AsgardianUserValidationService;
 import com.softobt.core.api.TokenDetail;
 import com.softobt.core.exceptions.models.CredentialException;
 import com.softobt.core.exceptions.models.RestServiceException;
+import nileuniversity.masters.project.filemanager.apimodels.LoginResponse;
 import nileuniversity.masters.project.filemanager.apimodels.RegistrationRequest;
 import nileuniversity.masters.project.filemanager.models.User;
 import nileuniversity.masters.project.filemanager.repository.AuthorityRepository;
@@ -38,8 +39,9 @@ public class UserService extends AsgardianUserValidationService<User>{
         return tokenUtil.getToken(user);
     }
 
-    public TokenDetail getNewToken(String username, String password)throws CredentialException {
-        return getToken(validateUserCredentials(username,password,defaultDomainName));
+    public LoginResponse getNewToken(String username, String password)throws CredentialException {
+        User user = this.validateUserCredentials(username,password,defaultDomainName);
+        return new LoginResponse(getToken(user),user);
     }
 
     @Autowired

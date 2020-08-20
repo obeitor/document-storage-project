@@ -6,7 +6,7 @@
 
     <groupId>ng.edu.nileuniversity</groupId>
     <artifactId>masters-project</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.4-SNAPSHOT</version>
 
     <repositories>
         <repository>

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 
 @Configuration
 public class DocApplicationConfig {
@@ -23,6 +24,9 @@ public class DocApplicationConfig {
     @Value("${app.domain.name:FILE-MGR}")
     private String defaultDomainName;
 
+    @Value("${app.ipfs.enabled:true}")
+    private boolean enableIpfs;
+
     @Bean
     public IPFS getIpfsConnection(){
         int ipfsPort = 5001;
@@ -30,7 +34,7 @@ public class DocApplicationConfig {
             ipfsPort = Integer.parseInt(this.ipfsPort);
         }
         catch (Exception e){}
-        return new IPFS(ipfsUrl,ipfsPort);
+        return  new IPFS(ipfsUrl,ipfsPort);
     }
 
 
