@@ -115,6 +115,12 @@ public class FileBlockStorageService {
             if(!current.getPrevioushash().equals(calculateHash(previous))){
                 throw new RestServiceException("Chain is not valid up to document requested");
             }
+            /**
+             * check if is 2nd block then check if document hash searched for is that of the previous,
+             * i.e. first block and return true
+             */
+            if(i==1 && current.getPrevioushash().equals(documentHash))
+                return true;
             if(currentHash.equals(documentHash))return true;
         }
         throw new RestServiceException("Hash was not found on the chain");

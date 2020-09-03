@@ -52,7 +52,7 @@ public class DocumentManagerService {
         Optional<DocumentInfo> optional = documentInfoRepository.findByDocumentHash(documentHash);
         if(optional.isPresent())
             return optional.get();
-        throw new RestServiceException("Sorry Document was not found");
+        throw new RestServiceException("Document is Invalid");
     }
 
     public String getFileIpfsLocation(String documentHash)throws RestServiceException{
